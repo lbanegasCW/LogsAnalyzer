@@ -1,4 +1,4 @@
-"""End-to-end and unit tests for processing pipeline."""
+"""Pruebas unitarias y de punta a punta del pipeline de procesamiento."""
 
 from logproc.api import process_log
 from logproc.worker import process_batch
@@ -37,7 +37,7 @@ def test_procesamiento_archivo(tmp_path):
         '10.0.0.1 - - [10/Sep/2024:15:03:27] "GET /a" 500 250',
         '10.0.0.2 - - [10/Sep/2024:15:03:28] "GET /b" 200 201',
         '10.0.0.3 - - [10/Sep/2024:15:03:29] "GET /a" 500 190',
-        "bad line that should be ignored",
+        "línea mala que debe ignorarse",
         '10.0.0.4 - - [10/Sep/2024:15:03:30] "GET /c" 200 50',
     ]
 

@@ -1,4 +1,4 @@
-"""Public stable API to process logs from any interface (CLI, web, scripts)."""
+"""API pública estable para procesar logs desde cualquier interfaz."""
 
 from __future__ import annotations
 
@@ -26,28 +26,28 @@ def process_log(
     json_out_path: Optional[str] = None,
     profile_stats_path: str = "profile.stats",
 ) -> ProcessingResult:
-    """Process a large log file using streaming and optional multi-processing.
+    """Procesa un archivo de logs grande usando *streaming* y multiproceso opcional.
 
-    Args:
-        input_path: Path to input log file.
-        batch_size: Number of lines per batch.
-        slow_threshold: Slow request threshold in milliseconds.
-        status_code: HTTP status code to aggregate.
-        workers: Worker count. ``None`` defaults to ``os.cpu_count()``.
-        profile: Whether to run processing under cProfile.
-        json_out_path: Optional path to dump serialized result.
-        profile_stats_path: cProfile stats output path when ``profile=True``.
+    Parámetros:
+        input_path: Ruta al archivo de logs de entrada.
+        batch_size: Cantidad de líneas por lote.
+        slow_threshold: Umbral de request lenta en milisegundos.
+        status_code: Código HTTP a agregar.
+        workers: Cantidad de procesos worker. ``None`` usa ``os.cpu_count()``.
+        profile: Si se ejecuta el procesamiento bajo cProfile.
+        json_out_path: Ruta opcional para exportar el resultado serializado.
+        profile_stats_path: Ruta de salida de cProfile cuando ``profile=True``.
 
-    Returns:
-        A ``ProcessingResult`` dataclass with aggregate metrics and top URLs.
+    Retorna:
+        Un dataclass ``ProcessingResult`` con métricas agregadas y URLs más frecuentes.
 
-    Raises:
-        OSError: If the file cannot be read.
-        ValueError: If invalid processing parameters are provided.
+    Errores:
+        OSError: Si el archivo no puede leerse.
+        ValueError: Si se proveen parámetros inválidos.
 
-    Performance:
-        Time complexity is ``O(n)`` over log lines. Memory is bounded by
-        ``batch_size`` plus URL aggregate dictionaries.
+    Rendimiento:
+        La complejidad temporal es ``O(n)`` sobre las líneas del log. La memoria
+        queda acotada por ``batch_size`` más los diccionarios agregados por URL.
     """
 
     worker_count = workers or (os.cpu_count() or 1)

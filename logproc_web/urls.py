@@ -1,4 +1,4 @@
-"""URL configuration for logproc_web."""
+"""Configuración de URLs de ``logproc_web``."""
 
 from django.contrib import admin
 from django.urls import include, path

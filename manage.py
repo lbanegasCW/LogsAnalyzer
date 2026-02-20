@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-"""Django administrative utility for logproc web dashboard."""
+"""Utilidad administrativa de Django para el panel web de logproc."""
 
 import os
 import sys
 
 
 def main() -> None:
-    """Run administrative tasks."""
+    """Ejecuta tareas administrativas."""
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "logproc_web.settings")
     from django.core.management import execute_from_command_line

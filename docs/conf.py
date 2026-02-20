@@ -1,4 +1,4 @@
-"""Sphinx configuration for logproc documentation."""
+"""Configuración de Sphinx para la documentación de logproc."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 project = "logproc"
-author = "logproc contributors"
+author = "colaboradores de logproc"
 release = "0.1.0"
 
 extensions = [

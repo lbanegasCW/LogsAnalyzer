@@ -1,5 +1,5 @@
-API modules
-===========
+Módulos de la API
+=================
 
 logproc.api
 -----------

@@ -1,4 +1,4 @@
-"""CLI entrypoint for streaming, parallel log processing."""
+"""Punto de entrada CLI para procesamiento de logs en streaming y paralelo."""
 
 from __future__ import annotations
 
@@ -10,44 +10,44 @@ from .metrics import ProcessingResult
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Build and return the CLI argument parser."""
+    """Construye y devuelve el parser de argumentos de la CLI."""
 
     parser = argparse.ArgumentParser(description="Procesador eficiente de logs en streaming")
     parser.add_argument("--input", required=True, help="Ruta al archivo de logs")
-    parser.add_argument("--batch-size", type=int, default=10_000, help="Tamaño de lote (default: 10000)")
+    parser.add_argument("--batch-size", type=int, default=10_000, help="Tamaño de lote (por defecto: 10000)")
     parser.add_argument("--slow-threshold", type=int, default=200, help="Umbral de request lenta en ms")
     parser.add_argument("--status", type=int, default=500, help="Código de estado a contabilizar")
     parser.add_argument(
         "--workers",
         type=int,
         default=os.cpu_count() or 1,
-        help="Número de workers (default: cpu_count)",
+        help="Número de workers (por defecto: cpu_count)",
     )
     parser.add_argument("--json-out", help="Ruta opcional para exportar resumen en JSON")
     parser.add_argument("--profile", action="store_true", help="Ejecuta bajo cProfile")
     parser.add_argument(
         "--profile-stats-path",
         default="profile.stats",
-        help="Archivo de salida para stats de cProfile",
+        help="Archivo de salida para estadísticas de cProfile",
     )
     return parser
 
 
 def print_summary(result: ProcessingResult) -> None:
-    """Print processing summary to stdout."""
+    """Imprime en stdout el resumen de procesamiento."""
 
     print("\n=== Resumen de procesamiento ===")
     print(f"Total líneas procesadas: {result.total_lines}")
-    print(f"bad_lines: {result.bad_lines}")
-    print(f"total_status({result.status_code}): {result.total_status}")
-    print(f"total_slow: {result.total_slow}")
-    print(f"top_status: {result.top_url_status[0]} ({result.top_url_status[1]})")
-    print(f"top_slow: {result.top_url_slow[0]} ({result.top_url_slow[1]})")
-    print(f"tiempo total: {result.elapsed_seconds:.4f} s")
+    print(f"líneas_malformadas: {result.bad_lines}")
+    print(f"total_estado({result.status_code}): {result.total_status}")
+    print(f"total_lentas: {result.total_slow}")
+    print(f"top_estado: {result.top_url_status[0]} ({result.top_url_status[1]})")
+    print(f"top_lentas: {result.top_url_slow[0]} ({result.top_url_slow[1]})")
+    print(f"tiempo_total: {result.elapsed_seconds:.4f} s")
 
 
 def main() -> int:
-    """CLI main routine."""
+    """Rutina principal de la CLI."""
 
     args = build_parser().parse_args()
     result = process_log(

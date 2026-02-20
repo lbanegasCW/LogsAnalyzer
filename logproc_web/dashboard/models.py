@@ -1,4 +1,4 @@
-"""Database models for processing runs."""
+"""Modelos de base de datos para ejecuciones de procesamiento."""
 
 from __future__ import annotations
 
@@ -6,13 +6,13 @@ from django.db import models
 
 
 class ProcessingRun(models.Model):
-    """Persisted execution of a log processing job."""
+    """Ejecución persistida de un trabajo de procesamiento de logs."""
 
     class Status(models.TextChoices):
-        PENDING = "PENDING", "Pending"
-        RUNNING = "RUNNING", "Running"
-        DONE = "DONE", "Done"
-        FAILED = "FAILED", "Failed"
+        PENDING = "PENDING", "Pendiente"
+        RUNNING = "RUNNING", "En ejecución"
+        DONE = "DONE", "Finalizado"
+        FAILED = "FAILED", "Fallido"
 
     created_at = models.DateTimeField(auto_now_add=True)
     started_at = models.DateTimeField(null=True, blank=True)
@@ -47,6 +47,6 @@ class ProcessingRun(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        """Return human-readable description."""
+        """Devuelve una descripción legible de la corrida."""
 
-        return f"Run #{self.pk} - {self.status}"
+        return f"Ejecución #{self.pk} - {self.status}"
