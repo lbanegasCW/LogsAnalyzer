@@ -1,107 +1,115 @@
 # logproc
 
-Procesador eficiente de logs grandes con arquitectura limpia y dos interfaces: CLI + Dashboard Django.
+Procesador eficiente de logs grandes con arquitectura limpia y dos interfaces: **CLI** y **Dashboard Django**.
+
+## Qué hace
+
+`logproc` procesa archivos de access logs en modo streaming, calcula métricas agregadas y devuelve:
+
+- Total de líneas procesadas.
+- Total de líneas malformadas.
+- Total de respuestas para uno o más códigos HTTP.
+- Total de requests lentas por umbral configurable.
+- Top URLs por código de estado y por lentitud.
+
+Está pensado para archivos grandes sin cargar todo en memoria.
 
 ## Arquitectura
 
-El repositorio separa **núcleo reutilizable** de interfaces:
+El repositorio separa el núcleo reutilizable de las interfaces:
 
-- `logproc/` (core):
-  - `reader.py`: lectura streaming en batches (sin cargar archivo completo).
-  - `parser.py`: `parse_line` pura y testeable.
-  - `worker.py`: `process_batch` para lotes.
+- `logproc/` (**core**)
+  - `reader.py`: lectura streaming en batches.
+  - `parser.py`: parsing puro y testeable.
+  - `worker.py`: procesamiento por lote.
   - `reducer.py`: merge de parciales.
-  - `metrics.py`: dataclasses/resultados + helpers top URLs.
-  - `api.py`: **API pública estable** `process_log(...)` para CLI/Web.
-- `logproc/__main__.py` (CLI): solo parsea args y delega en `logproc.api`.
-- `logproc_web/` (Django): interfaz web que también llama a `logproc.api`.
+  - `metrics.py`: dataclasses + helpers de top URLs.
+  - `api.py`: API pública estable `process_log(...)`.
+- `logproc/__main__.py` (**CLI**): parsea argumentos y delega en `logproc.api`.
+- `logproc_web/` (**Django**): interfaz web que usa la misma API de core.
 
 Principios aplicados:
 
-- E/S eficiente vía streaming + batching.
+- Streaming + batching para E/S eficiente.
 - Complejidad temporal O(n).
-- Memoria acotada a batch + agregados (`dict/Counter`).
-- Concurrencia controlada (`ProcessPoolExecutor` configurable).
-- Profiling con cProfile opcional.
-- Sin optimización prematura: claridad primero, medir luego.
+- Memoria acotada a batch + agregados.
+- Concurrencia configurable con `ProcessPoolExecutor`.
+- Profiling opcional con `cProfile`.
 
-## Uso CLI
-
-```bash
-python -m logproc --input /ruta/access.log --batch-size 10000 --slow-threshold 200 --status 500 --workers 4 --json-out out.json --profile
-```
-
-Parámetros:
-
-- `--input` obligatorio.
-- `--batch-size` por defecto `10000`.
-- `--slow-threshold` por defecto `200`.
-- `--status` por defecto `500`.
-- `--workers` por defecto `os.cpu_count()`.
-- `--json-out` opcional.
-- `--profile` opcional.
-- `--profile-stats-path` default `profile.stats`.
-
-## Web Dashboard
-
-### Características
-
-- Listado de ejecuciones con filtros por estado y fecha.
-- Alta de nueva ejecución con:
-  - `input_path` (recomendado para logs grandes).
-  - upload opcional (solo pruebas pequeñas).
-  - parámetros de procesamiento.
-  - checkbox de profiling.
-- Detalle de ejecución con cards de métricas, tablas top 10 y gráfico simple (Chart.js CDN).
-- Ejecución en background con hilo daemon para no bloquear request.
-
-> Nota: para producción se recomienda reemplazar runner thread por Celery/RQ con workers externos y retries.
-
-### Ejecutar Django
-
-1. Instalar dependencias:
+## Instalación
 
 ```bash
 pip install -e .[dev]
 ```
 
-2. Migrar DB:
+## Uso por CLI
+
+```bash
+python -m logproc \
+  --input /ruta/access.log \
+  --batch-size 10000 \
+  --slow-threshold 200 \
+  --status 500 \
+  --workers 4 \
+  --json-out out.json \
+  --profile
+```
+
+Parámetros principales:
+
+- `--input` (obligatorio): ruta al archivo de log.
+- `--batch-size` (default: `10000`).
+- `--slow-threshold` (default: `200`).
+- `--status` (default: `500`).
+- `--workers` (default: `os.cpu_count()`).
+- `--json-out` (opcional): exporta el resumen en JSON.
+- `--profile` (opcional): ejecuta con cProfile.
+- `--profile-stats-path` (default: `profile.stats`).
+
+## API pública de procesamiento
+
+La función principal es:
+
+- `logproc.api.process_log(...)`
+
+Permite integración desde scripts, servicios o la app web, sin depender de la CLI.
+
+## Dashboard web (Django)
+
+### Funcionalidades
+
+- Listado de ejecuciones con filtros por estado y fecha.
+- Creación de ejecución con dos modos de entrada:
+  - Ruta de archivo (`input_path`), recomendado para archivos grandes.
+  - Upload de archivo (más útil para pruebas pequeñas).
+- Configuración de parámetros por corrida:
+  - `batch_size`, `slow_threshold`, `status_codes`, `workers`, `profile`.
+- Ejecución en background para no bloquear la request.
+- Vista de detalle con:
+  - Métricas generales.
+  - Top 10 URLs por códigos de estado y por lentitud.
+  - Gráfico de barras simple (Chart.js).
+
+> Nota: para producción se recomienda reemplazar el runner en hilo por Celery o RQ.
+
+### Levantar el dashboard
 
 ```bash
 python manage.py migrate
-```
-
-3. Levantar servidor:
-
-```bash
 python manage.py runserver
 ```
 
-4. Abrir `http://127.0.0.1:8000/` para crear ejecuciones y ver métricas.
+Luego abrir `http://127.0.0.1:8000/`.
 
 ## Profiling
 
-CLI o dashboard pueden ejecutar con profiling:
+Tanto en CLI como en dashboard se puede ejecutar con profiling.
 
-- se guarda archivo `.stats`
-- se puede inspeccionar con:
+Para inspeccionar un archivo de stats:
 
 ```bash
 python -c "import pstats; p=pstats.Stats('profile.stats'); p.sort_stats('cumtime').print_stats(30)"
 ```
-
-## Documentación
-
-Se incluye Sphinx con autodoc en `docs/`.
-
-### Generar HTML
-
-```bash
-pip install -e .[dev]
-make -C docs html
-```
-
-Salida en `docs/_build/html/index.html`.
 
 ## Tests
 
@@ -109,7 +117,15 @@ Salida en `docs/_build/html/index.html`.
 pytest -q
 ```
 
-## Estructura final del repositorio
+## Documentación (Sphinx)
+
+```bash
+make -C docs html
+```
+
+Salida: `docs/_build/html/index.html`.
+
+## Estructura del repositorio
 
 ```text
 .

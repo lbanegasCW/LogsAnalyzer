@@ -29,26 +29,26 @@ def process_log(
 ) -> ProcessingResult:
     """Procesa un archivo de logs grande usando *streaming* y multiproceso opcional.
 
-    Parámetros:
+    Args:
         input_path: Ruta al archivo de logs de entrada.
         batch_size: Cantidad de líneas por lote.
         slow_threshold: Umbral de request lenta en milisegundos.
-        status_code: Código HTTP a agregar (compatibilidad).
+        status_code: Código HTTP a agregar por compatibilidad hacia atrás.
         status_codes: Lista de códigos HTTP a agregar.
         workers: Cantidad de procesos worker. ``None`` usa ``os.cpu_count()``.
         profile: Si se ejecuta el procesamiento bajo cProfile.
         json_out_path: Ruta opcional para exportar el resultado serializado.
         profile_stats_path: Ruta de salida de cProfile cuando ``profile=True``.
 
-    Retorna:
+    Returns:
         Un dataclass ``ProcessingResult`` con métricas agregadas y URLs más frecuentes.
 
-    Errores:
+    Raises:
         OSError: Si el archivo no puede leerse.
         ValueError: Si se proveen parámetros inválidos.
 
-    Rendimiento:
-        La complejidad temporal es ``O(n)`` sobre las líneas del log. La memoria
+    Notes:
+        La complejidad temporal es ``O(n)`` sobre las líneas del log y la memoria
         queda acotada por ``batch_size`` más los diccionarios agregados por URL.
     """
 
