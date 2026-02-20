@@ -53,6 +53,8 @@ class ProcessingRunForm(forms.ModelForm):
         """Configura valores por defecto alineados con la CLI."""
 
         super().__init__(*args, **kwargs)
+        self.fields["input_path"].required = False
+        self.fields["uploaded_file"].required = False
         self.fields["batch_size"].initial = 10_000
         self.fields["slow_threshold"].initial = 200
         self.fields["status_codes"].initial = "500"
