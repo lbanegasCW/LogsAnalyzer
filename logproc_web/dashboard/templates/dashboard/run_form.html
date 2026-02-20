@@ -1,0 +1,10 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<h1 class="h3 mb-3">Nueva ejecución</h1>
+<p class="text-muted">Para logs grandes usar <strong>input_path</strong>. Upload recomendado solo para pruebas pequeñas.</p>
+<form method="post" enctype="multipart/form-data" class="card card-body">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">Iniciar procesamiento</button>
+</form>
+{% endblock %}

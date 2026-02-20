@@ -1,4 +1,4 @@
-"""Streaming file reader that yields fixed-size batches."""
+"""Streaming readers for very large log files."""
 
 from __future__ import annotations
 
@@ -6,9 +6,22 @@ from typing import Generator, List
 
 
 def read_batches(path: str, batch_size: int = 10_000) -> Generator[List[str], None, None]:
-    """Yield log file lines in batches of exactly ``batch_size`` (except last batch).
+    """Yield fixed-size batches from a text file.
 
-    The function streams from disk and never loads the full file into memory.
+    Args:
+        path: Input file path.
+        batch_size: Number of lines per yielded batch.
+
+    Yields:
+        Lists of raw lines, except the last batch which may be smaller.
+
+    Raises:
+        ValueError: If ``batch_size <= 0``.
+        OSError: If file cannot be opened/read.
+
+    Performance:
+        - Time: ``O(n)`` over number of lines.
+        - Memory: ``O(batch_size * avg_line_size)``.
     """
 
     if batch_size <= 0:

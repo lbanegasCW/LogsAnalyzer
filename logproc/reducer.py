@@ -1,4 +1,4 @@
-"""Reduce/merge partial stats from workers into final metrics."""
+"""Reduction helpers to merge worker partials into final aggregates."""
 
 from __future__ import annotations
 
@@ -9,7 +9,17 @@ from .metrics import PartialStats
 
 
 def merge_partials(partials: Iterable[PartialStats]) -> PartialStats:
-    """Merge PartialStats objects efficiently using additive counters."""
+    """Merge ``PartialStats`` stream into a single ``PartialStats``.
+
+    Args:
+        partials: Iterable of worker partial outputs.
+
+    Returns:
+        A merged ``PartialStats`` object.
+
+    Complexity:
+        ``O(p + u)`` where ``p`` is number of partials and ``u`` unique URLs.
+    """
 
     merged = PartialStats()
     merged_status_counter: Counter[str] = Counter()
@@ -18,7 +28,7 @@ def merge_partials(partials: Iterable[PartialStats]) -> PartialStats:
     for part in partials:
         merged.total_lines += part.total_lines
         merged.bad_lines += part.bad_lines
-        merged.total_500 += part.total_500
+        merged.total_status += part.total_status
         merged.total_slow += part.total_slow
         merged_status_counter.update(part.status_by_url)
         merged_slow_counter.update(part.slow_by_url)
