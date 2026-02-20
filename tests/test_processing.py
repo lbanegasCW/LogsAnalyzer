@@ -1,4 +1,6 @@
-from logproc.__main__ import process_file
+"""End-to-end and unit tests for processing pipeline."""
+
+from logproc.api import process_log
 from logproc.worker import process_batch
 
 
@@ -11,7 +13,7 @@ def test_filtrado_500():
     ]
 
     partial = process_batch(batch, status_code=500, slow_threshold=200)
-    assert partial.total_500 == 3
+    assert partial.total_status == 3
     assert partial.status_by_url["/a"] == 2
     assert max(partial.status_by_url.items(), key=lambda x: x[1]) == ("/a", 2)
 
@@ -35,14 +37,14 @@ def test_procesamiento_archivo(tmp_path):
         '10.0.0.1 - - [10/Sep/2024:15:03:27] "GET /a" 500 250',
         '10.0.0.2 - - [10/Sep/2024:15:03:28] "GET /b" 200 201',
         '10.0.0.3 - - [10/Sep/2024:15:03:29] "GET /a" 500 190',
-        'bad line that should be ignored',
+        "bad line that should be ignored",
         '10.0.0.4 - - [10/Sep/2024:15:03:30] "GET /c" 200 50',
     ]
 
     log_file = tmp_path / "access.log"
     log_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    result = process_file(
+    result = process_log(
         str(log_file),
         batch_size=2,
         slow_threshold=200,
@@ -52,8 +54,7 @@ def test_procesamiento_archivo(tmp_path):
 
     assert result.total_lines == 5
     assert result.bad_lines == 1
-    assert result.total_500 == 2
+    assert result.total_status == 2
     assert result.total_slow == 2
-    assert result.url_mas_500 == ("/a", 2)
-    # /a and /b both slow once; stable expectation by deterministic input where /a first.
-    assert result.url_mas_slow == ("/a", 1)
+    assert result.top_url_status == ("/a", 2)
+    assert result.top_url_slow == ("/a", 1)

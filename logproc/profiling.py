@@ -1,4 +1,4 @@
-"""cProfile helper utilities for CLI integration."""
+"""Utilities to run callables under cProfile."""
 
 from __future__ import annotations
 
@@ -11,7 +11,16 @@ T = TypeVar("T")
 
 
 def run_with_profile(func: Callable[[], T], stats_path: str = "profile.stats", top_n: int = 20) -> T:
-    """Execute ``func`` under cProfile, dump stats file, and print top hotspots."""
+    """Execute ``func`` under cProfile and persist profiler stats.
+
+    Args:
+        func: Zero-arg callable to execute.
+        stats_path: Destination path for profile stats.
+        top_n: Number of hotspots to print by cumulative time.
+
+    Returns:
+        The value returned by ``func``.
+    """
 
     profiler = cProfile.Profile()
     profiler.enable()

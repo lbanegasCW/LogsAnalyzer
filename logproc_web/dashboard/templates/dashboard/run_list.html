@@ -1,0 +1,37 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<h1 class="h3 mb-3">Ejecuciones</h1>
+<form class="row g-2 mb-4" method="get">
+    <div class="col-md-3">
+        <select class="form-select" name="status">
+            <option value="">Todos los estados</option>
+            {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <input type="date" class="form-control" name="date" value="{{ date_filter }}">
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-primary">Filtrar</button>
+    </div>
+</form>
+<table class="table table-striped align-middle">
+    <thead><tr><th>ID</th><th>Creado</th><th>Estado</th><th>Archivo</th><th>Total líneas</th><th></th></tr></thead>
+    <tbody>
+    {% for run in runs %}
+        <tr>
+            <td>{{ run.id }}</td>
+            <td>{{ run.created_at }}</td>
+            <td><span class="badge bg-secondary">{{ run.status }}</span></td>
+            <td class="small text-break">{{ run.input_path|default:"(upload)" }}</td>
+            <td>{{ run.total_lines }}</td>
+            <td><a class="btn btn-sm btn-outline-primary" href="/runs/{{ run.id }}/">Ver</a></td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="6">No hay ejecuciones.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

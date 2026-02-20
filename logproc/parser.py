@@ -1,24 +1,32 @@
-"""Line parser utilities for access log entries."""
+"""Parsing helpers for access-log lines.
+
+The parser is pure and stateless to remain process-safe and testable.
+"""
 
 from __future__ import annotations
 
 import re
 from typing import Optional, Tuple
 
-# Example line:
-# 192.168.0.1 - - [10/Sep/2024:15:03:27] "GET /index.html" 200 125
+ParsedLine = Tuple[str, int, int]
+
 _LOG_RE = re.compile(
     r'^(?P<ip>\S+)\s+-\s+-\s+\[(?P<date>[^\]]+)\]\s+"(?P<method>[A-Z]+)\s+(?P<url>\S+)"\s+(?P<status>\d{3})\s+(?P<response_time>\d+)$'
 )
 
-ParsedLine = Tuple[str, int, int]
 
+def parse_line(line: str) -> Optional[ParsedLine]:
+    """Parse a raw line into normalized fields.
 
-def parse_log_line(line: str) -> Optional[ParsedLine]:
-    """Parse a log line and return (url, status, response_time_ms).
+    Args:
+        line: Raw log line.
 
-    Returns None for malformed lines. This function is intentionally pure and
-    side-effect free, so workers can call it safely in parallel.
+    Returns:
+        Tuple ``(url, status_code, response_time_ms)`` when parsing succeeds,
+        otherwise ``None`` for malformed lines.
+
+    Complexity:
+        ``O(k)`` where ``k`` is line length.
     """
 
     match = _LOG_RE.match(line.strip())
@@ -27,3 +35,9 @@ def parse_log_line(line: str) -> Optional[ParsedLine]:
 
     groups = match.groupdict()
     return groups["url"], int(groups["status"]), int(groups["response_time"])
+
+
+def parse_log_line(line: str) -> Optional[ParsedLine]:
+    """Backward-compatible alias for previous public parser name."""
+
+    return parse_line(line)
