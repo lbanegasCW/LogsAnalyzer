@@ -1,4 +1,4 @@
-"""Reduction helpers to merge worker partials into final aggregates."""
+"""Utilidades de reducción para fusionar parciales de workers."""
 
 from __future__ import annotations
 
@@ -9,16 +9,16 @@ from .metrics import PartialStats
 
 
 def merge_partials(partials: Iterable[PartialStats]) -> PartialStats:
-    """Merge ``PartialStats`` stream into a single ``PartialStats``.
+    """Fusiona un flujo de ``PartialStats`` en un único ``PartialStats``.
 
     Args:
-        partials: Iterable of worker partial outputs.
+        partials: Iterable de resultados parciales de procesos.
 
     Returns:
-        A merged ``PartialStats`` object.
+        Un objeto ``PartialStats`` fusionado.
 
-    Complexity:
-        ``O(p + u)`` where ``p`` is number of partials and ``u`` unique URLs.
+    Complejidad:
+        ``O(p + u)`` donde ``p`` es la cantidad de parciales y ``u`` las URLs únicas.
     """
 
     merged = PartialStats()

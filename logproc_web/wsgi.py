@@ -1,4 +1,4 @@
-"""WSGI config for logproc_web project."""
+"""Configuración WSGI para el proyecto logproc_web."""
 
 import os
 

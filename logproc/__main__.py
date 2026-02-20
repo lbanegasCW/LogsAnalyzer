@@ -1,4 +1,4 @@
-"""CLI entrypoint for streaming, parallel log processing."""
+"""Punto de entrada CLI para procesamiento de logs en streaming y paralelo."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from .metrics import ProcessingResult
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Build and return the CLI argument parser."""
+    """Construye y devuelve el parser de argumentos de CLI."""
 
     parser = argparse.ArgumentParser(description="Procesador eficiente de logs en streaming")
     parser.add_argument("--input", required=True, help="Ruta al archivo de logs")
@@ -21,33 +21,33 @@ def build_parser() -> argparse.ArgumentParser:
         "--workers",
         type=int,
         default=os.cpu_count() or 1,
-        help="Número de workers (default: cpu_count)",
+        help="Número de procesos worker (default: cpu_count)",
     )
     parser.add_argument("--json-out", help="Ruta opcional para exportar resumen en JSON")
     parser.add_argument("--profile", action="store_true", help="Ejecuta bajo cProfile")
     parser.add_argument(
         "--profile-stats-path",
         default="profile.stats",
-        help="Archivo de salida para stats de cProfile",
+        help="Archivo de salida para estadísticas de cProfile",
     )
     return parser
 
 
 def print_summary(result: ProcessingResult) -> None:
-    """Print processing summary to stdout."""
+    """Imprime el resumen del procesamiento por salida estándar."""
 
     print("\n=== Resumen de procesamiento ===")
-    print(f"Total líneas procesadas: {result.total_lines}")
-    print(f"bad_lines: {result.bad_lines}")
-    print(f"total_status({result.status_code}): {result.total_status}")
-    print(f"total_slow: {result.total_slow}")
-    print(f"top_status: {result.top_url_status[0]} ({result.top_url_status[1]})")
-    print(f"top_slow: {result.top_url_slow[0]} ({result.top_url_slow[1]})")
-    print(f"tiempo total: {result.elapsed_seconds:.4f} s")
+    print(f"Total de líneas procesadas: {result.total_lines}")
+    print(f"Líneas malformadas: {result.bad_lines}")
+    print(f"Total estado ({result.status_code}): {result.total_status}")
+    print(f"Total lentas: {result.total_slow}")
+    print(f"URL principal por estado: {result.top_url_status[0]} ({result.top_url_status[1]})")
+    print(f"URL principal por lentitud: {result.top_url_slow[0]} ({result.top_url_slow[1]})")
+    print(f"Tiempo total: {result.elapsed_seconds:.4f} s")
 
 
 def main() -> int:
-    """CLI main routine."""
+    """Rutina principal de CLI."""
 
     args = build_parser().parse_args()
     result = process_log(

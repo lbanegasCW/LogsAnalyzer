@@ -1,1 +1,1 @@
-"""Dashboard app for launching and inspecting log processing runs."""
+"""App de dashboard para lanzar e inspeccionar ejecuciones de procesamiento."""

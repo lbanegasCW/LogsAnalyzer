@@ -1,6 +1,6 @@
-"""Parsing helpers for access-log lines.
+"""Utilidades de parseo para líneas de access-log.
 
-The parser is pure and stateless to remain process-safe and testable.
+El parser es puro y sin estado para mantenerse seguro en multiproceso y testeable.
 """
 
 from __future__ import annotations
@@ -16,17 +16,17 @@ _LOG_RE = re.compile(
 
 
 def parse_line(line: str) -> Optional[ParsedLine]:
-    """Parse a raw line into normalized fields.
+    """Parsea una línea cruda en campos normalizados.
 
     Args:
-        line: Raw log line.
+        line: Línea cruda del log.
 
     Returns:
-        Tuple ``(url, status_code, response_time_ms)`` when parsing succeeds,
-        otherwise ``None`` for malformed lines.
+        Tupla ``(url, status_code, response_time_ms)`` cuando el parseo es
+        exitoso; en caso contrario ``None`` para líneas malformadas.
 
-    Complexity:
-        ``O(k)`` where ``k`` is line length.
+    Complejidad:
+        ``O(k)`` donde ``k`` es el largo de la línea.
     """
 
     match = _LOG_RE.match(line.strip())
@@ -38,6 +38,6 @@ def parse_line(line: str) -> Optional[ParsedLine]:
 
 
 def parse_log_line(line: str) -> Optional[ParsedLine]:
-    """Backward-compatible alias for previous public parser name."""
+    """Alias retrocompatible para el nombre público anterior del parser."""
 
     return parse_line(line)

@@ -1,8 +1,8 @@
-"""Simple background job runner for development environments.
+"""Ejecutor simple en segundo plano para entornos de desarrollo.
 
-For production deployments, use a robust queue system (Celery/RQ/Arq) with external
-workers and retries. This in-process thread runner is intentionally lightweight for
-local and practical usage.
+Para despliegues productivos, se recomienda una cola robusta (Celery/RQ/Arq)
+con workers externos y reintentos. Este runner con hilo local es liviano e
+intencional para uso práctico en desarrollo.
 """
 
 from __future__ import annotations
@@ -18,17 +18,17 @@ from .models import ProcessingRun
 
 
 def _resolve_input_path(run: ProcessingRun) -> str:
-    """Resolve effective input path from explicit path or uploaded file."""
+    """Resuelve la ruta efectiva de entrada desde ruta explícita o archivo subido."""
 
     if run.input_path:
         return run.input_path
     if run.uploaded_file:
         return run.uploaded_file.path
-    raise ValueError("Run without input source")
+    raise ValueError("Ejecución sin fuente de entrada")
 
 
 def _execute_run(run_id: int) -> None:
-    """Execute a run and persist final status/metrics."""
+    """Ejecuta una corrida y persiste estado final y métricas."""
 
     run = ProcessingRun.objects.get(pk=run_id)
     run.status = ProcessingRun.Status.RUNNING
@@ -76,7 +76,7 @@ def _execute_run(run_id: int) -> None:
 
 
 def launch_run_in_background(run: ProcessingRun) -> None:
-    """Start an asynchronous daemon thread for a processing run."""
+    """Inicia un hilo daemon asíncrono para una ejecución de procesamiento."""
 
     thread = threading.Thread(target=_execute_run, args=(run.pk,), daemon=True)
     thread.start()

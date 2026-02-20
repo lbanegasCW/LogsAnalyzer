@@ -1,6 +1,6 @@
 # logproc
 
-Procesador eficiente de logs grandes con arquitectura limpia y dos interfaces: CLI + Dashboard Django.
+Procesador eficiente de logs grandes con arquitectura limpia y dos interfaces: CLI + panel de Django.
 
 ## Arquitectura
 
@@ -11,7 +11,7 @@ El repositorio separa **core reusable** de interfaces:
   - `parser.py`: `parse_line` pura y testeable.
   - `worker.py`: `process_batch` para lotes.
   - `reducer.py`: merge de parciales.
-  - `metrics.py`: dataclasses/resultados + helpers top URLs.
+  - `metrics.py`: dataclasses/resultados + utilidades para top de URLs.
   - `api.py`: **API pública estable** `process_log(...)` para CLI/Web.
 - `logproc/__main__.py` (CLI): solo parsea args y delega en `logproc.api`.
 - `logproc_web/` (Django): interfaz web que también llama a `logproc.api`.
@@ -34,28 +34,28 @@ python -m logproc --input /ruta/access.log --batch-size 10000 --slow-threshold 2
 Parámetros:
 
 - `--input` obligatorio.
-- `--batch-size` default `10000`.
-- `--slow-threshold` default `200`.
-- `--status` default `500`.
-- `--workers` default `os.cpu_count()`.
+- `--batch-size` por defecto `10000`.
+- `--slow-threshold` por defecto `200`.
+- `--status` por defecto `500`.
+- `--workers` por defecto `os.cpu_count()`.
 - `--json-out` opcional.
 - `--profile` opcional.
-- `--profile-stats-path` default `profile.stats`.
+- `--profile-stats-path` por defecto `profile.stats`.
 
-## Web Dashboard
+## Panel web
 
-### Características
+### Funcionalidades
 
 - Listado de ejecuciones con filtros por estado y fecha.
 - Alta de nueva ejecución con:
   - `input_path` (recomendado para logs grandes).
-  - upload opcional (solo pruebas pequeñas).
+  - subida opcional (solo pruebas pequeñas).
   - parámetros de procesamiento.
   - checkbox de profiling.
 - Detalle de ejecución con cards de métricas, tablas top 10 y gráfico simple (Chart.js CDN).
-- Ejecución en background con thread daemon para no bloquear request.
+- Ejecución en segundo plano con hilo daemon para no bloquear la request.
 
-> Nota: para producción se recomienda reemplazar runner thread por Celery/RQ con workers externos y retries.
+> Nota: para producción se recomienda reemplazar el hilo runner por Celery/RQ con workers externos y reintentos.
 
 ### Ejecutar Django
 
@@ -79,11 +79,11 @@ python manage.py runserver
 
 4. Abrir `http://127.0.0.1:8000/` para crear ejecuciones y ver métricas.
 
-## Profiling
+## Perfilado
 
 CLI o dashboard pueden ejecutar con profiling:
 
-- se guarda archivo `.stats`
+- se guarda un archivo `.stats`
 - se puede inspeccionar con:
 
 ```bash
@@ -94,7 +94,7 @@ python -c "import pstats; p=pstats.Stats('profile.stats'); p.sort_stats('cumtime
 
 Se incluye Sphinx con autodoc en `docs/`.
 
-### Generar HTML
+### Generar documentación HTML
 
 ```bash
 pip install -e .[dev]
@@ -103,7 +103,7 @@ make -C docs html
 
 Salida en `docs/_build/html/index.html`.
 
-## Tests
+## Pruebas
 
 ```bash
 pytest -q

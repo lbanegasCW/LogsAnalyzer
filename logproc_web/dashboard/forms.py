@@ -1,4 +1,4 @@
-"""Forms used by dashboard views."""
+"""Formularios usados por las vistas del dashboard."""
 
 from __future__ import annotations
 
@@ -10,9 +10,9 @@ from .models import ProcessingRun
 
 
 class ProcessingRunForm(forms.ModelForm):
-    """Form to create a new processing run."""
+    """Formulario para crear una nueva ejecución de procesamiento."""
 
-    profile = forms.BooleanField(required=False)
+    profile = forms.BooleanField(required=False, label="Habilitar profiling (cProfile)")
 
     class Meta:
         model = ProcessingRun
@@ -27,7 +27,7 @@ class ProcessingRunForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Set defaults tuned for CLI parity."""
+        """Define valores iniciales con paridad respecto de CLI."""
 
         super().__init__(*args, **kwargs)
         self.fields["batch_size"].initial = 10_000
@@ -35,20 +35,27 @@ class ProcessingRunForm(forms.ModelForm):
         self.fields["status_code"].initial = 500
         self.fields["workers"].initial = os.cpu_count() or 1
 
+        self.fields["input_path"].label = "Ruta del archivo de entrada"
+        self.fields["uploaded_file"].label = "Archivo subido"
+        self.fields["batch_size"].label = "Tamaño de lote"
+        self.fields["slow_threshold"].label = "Umbral de lentitud (ms)"
+        self.fields["status_code"].label = "Código de estado"
+        self.fields["workers"].label = "Cantidad de procesos worker"
+
     def clean(self) -> dict:
-        """Validate file source and path consistency."""
+        """Valida la consistencia entre fuente de archivo y ruta."""
 
         cleaned = super().clean()
         input_path = cleaned.get("input_path")
         uploaded_file = cleaned.get("uploaded_file")
 
         if not input_path and not uploaded_file:
-            raise forms.ValidationError("Debe indicar un input_path o subir un archivo pequeño.")
+            raise forms.ValidationError("Debe indicar una ruta de entrada o subir un archivo pequeño.")
 
         if input_path:
             if not os.path.exists(input_path):
-                raise forms.ValidationError("input_path no existe.")
+                raise forms.ValidationError("La ruta de entrada no existe.")
             if not os.path.isfile(input_path):
-                raise forms.ValidationError("input_path debe ser un archivo regular.")
+                raise forms.ValidationError("La ruta de entrada debe ser un archivo regular.")
 
         return cleaned

@@ -1,4 +1,4 @@
-"""Django settings for logproc_web project."""
+"""Configuración de Django para el proyecto logproc_web."""
 
 from pathlib import Path
 

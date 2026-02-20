@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "logproc"
 version = "0.1.0"
-description = "Streaming and parallel large log processor"
+description = "Procesador de logs grandes en streaming y paralelo"
 requires-python = ">=3.10"
 dependencies = [
     "Django>=5.0,<6.0",

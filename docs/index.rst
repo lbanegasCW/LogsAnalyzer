@@ -1,8 +1,8 @@
-logproc documentation
-====================
+documentación de logproc
+========================
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contenido:
 
    modules

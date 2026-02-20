@@ -1,4 +1,4 @@
-"""Tests for parser helpers."""
+"""Pruebas para utilidades del parser."""
 
 from logproc.parser import parse_line
 
@@ -9,4 +9,4 @@ def test_parse_log_line_ok():
 
 
 def test_parse_log_line_bad():
-    assert parse_line("malformed line") is None
+    assert parse_line("línea malformada") is None

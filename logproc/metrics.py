@@ -1,7 +1,7 @@
-"""Metric data structures and helpers for log processing.
+"""Estructuras de datos y utilidades de métricas para el procesamiento de logs.
 
-This module centralizes immutable-ish containers used across CLI and web interfaces.
-All heavy processing keeps only aggregated counters to preserve bounded memory usage.
+Este módulo centraliza contenedores casi inmutables usados por CLI e interfaz web.
+El procesamiento pesado conserva solo contadores agregados para mantener memoria acotada.
 """
 
 from __future__ import annotations
@@ -12,15 +12,15 @@ from typing import Dict, Optional, Sequence, Tuple
 
 @dataclass(slots=True)
 class PartialStats:
-    """Worker-local counters for a single processed batch.
+    """Contadores locales de worker para un único lote procesado.
 
     Attributes:
-        total_lines: Number of lines seen in the batch.
-        bad_lines: Number of malformed lines in the batch.
-        total_status: Number of lines matching the target status code.
-        total_slow: Number of lines with response time above threshold.
-        status_by_url: Per-URL frequencies for target status code.
-        slow_by_url: Per-URL frequencies for slow responses.
+        total_lines: Cantidad de líneas vistas en el lote.
+        bad_lines: Cantidad de líneas malformadas en el lote.
+        total_status: Cantidad de líneas que coinciden con el estado objetivo.
+        total_slow: Cantidad de líneas con tiempo de respuesta sobre el umbral.
+        status_by_url: Frecuencias por URL para el código de estado objetivo.
+        slow_by_url: Frecuencias por URL para respuestas lentas.
     """
 
     total_lines: int = 0
@@ -33,22 +33,22 @@ class PartialStats:
 
 @dataclass(slots=True)
 class ProcessingResult:
-    """Final aggregated metrics for a full log run.
+    """Métricas finales agregadas para una ejecución completa de log.
 
     Attributes:
-        total_lines: Total number of processed lines.
-        bad_lines: Total malformed lines.
-        total_status: Total entries matching ``status_code``.
-        total_slow: Total entries above ``slow_threshold``.
-        top_url_status: URL with most matching status occurrences.
-        top_url_slow: URL with most slow occurrences.
-        top_10_status: Top 10 URLs for matching status.
-        top_10_slow: Top 10 URLs for slow responses.
-        elapsed_seconds: End-to-end processing duration in seconds.
-        status_code: Status code used for filtering.
-        slow_threshold: Slow threshold in milliseconds.
-        workers: Number of workers used.
-        profile_stats_path: Path to cProfile stats file, when profiling is enabled.
+        total_lines: Cantidad total de líneas procesadas.
+        bad_lines: Cantidad total de líneas malformadas.
+        total_status: Total de entradas que coinciden con ``status_code``.
+        total_slow: Total de entradas por encima de ``slow_threshold``.
+        top_url_status: URL con más ocurrencias del estado objetivo.
+        top_url_slow: URL con más ocurrencias lentas.
+        top_10_status: Top 10 URLs para el estado objetivo.
+        top_10_slow: Top 10 URLs para respuestas lentas.
+        elapsed_seconds: Duración total del procesamiento en segundos.
+        status_code: Código de estado usado para el filtrado.
+        slow_threshold: Umbral de lentitud en milisegundos.
+        workers: Cantidad de procesos worker utilizados.
+        profile_stats_path: Ruta al archivo de cProfile, si hubo profiling.
     """
 
     total_lines: int
@@ -66,19 +66,19 @@ class ProcessingResult:
     profile_stats_path: Optional[str] = None
 
     def to_dict(self) -> dict:
-        """Return a JSON-serializable dictionary representation."""
+        """Devuelve una representación en diccionario serializable a JSON."""
 
         return asdict(self)
 
 
 def top_url(counts: Dict[str, int]) -> Tuple[Optional[str], int]:
-    """Return the URL with highest frequency.
+    """Devuelve la URL con mayor frecuencia.
 
     Args:
-        counts: Mapping ``url -> count``.
+        counts: Mapeo ``url -> cantidad``.
 
     Returns:
-        Tuple with (url, count). If ``counts`` is empty, returns ``(None, 0)``.
+        Tupla ``(url, cantidad)``. Si ``counts`` está vacío, devuelve ``(None, 0)``.
     """
 
     if not counts:
@@ -87,17 +87,17 @@ def top_url(counts: Dict[str, int]) -> Tuple[Optional[str], int]:
 
 
 def top_n_urls(counts: Dict[str, int], limit: int = 10) -> Sequence[Tuple[str, int]]:
-    """Return the top-N URLs sorted by descending frequency.
+    """Devuelve el top-N de URLs ordenado por frecuencia descendente.
 
     Args:
-        counts: Mapping ``url -> count``.
-        limit: Maximum number of pairs returned.
+        counts: Mapeo ``url -> cantidad``.
+        limit: Cantidad máxima de pares devueltos.
 
     Returns:
-        A list of ``(url, count)`` pairs.
+        Una lista de pares ``(url, cantidad)``.
 
-    Complexity:
-        Runs in ``O(m log m)`` over number of unique URLs ``m``.
+    Complejidad:
+        Ejecuta en ``O(m log m)`` sobre la cantidad de URLs únicas ``m``.
     """
 
     return sorted(counts.items(), key=lambda item: item[1], reverse=True)[:limit]

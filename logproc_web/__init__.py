@@ -1,1 +1,1 @@
-"""Django project package for the logproc dashboard."""
+"""Paquete del proyecto Django para el dashboard de logproc."""

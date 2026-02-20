@@ -1,4 +1,4 @@
-"""ASGI config for logproc_web project."""
+"""Configuración ASGI para el proyecto logproc_web."""
 
 import os
 

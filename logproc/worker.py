@@ -1,4 +1,4 @@
-"""Batch worker logic executed in-process or in process pools."""
+"""Lógica de proceso por lote, ejecutable localmente o en pool de procesos."""
 
 from __future__ import annotations
 
@@ -10,18 +10,18 @@ from .parser import parse_line
 
 
 def process_batch(batch: Iterable[str], status_code: int = 500, slow_threshold: int = 200) -> PartialStats:
-    """Process one batch and return partial aggregate counters.
+    """Procesa un lote y devuelve contadores agregados parciales.
 
     Args:
-        batch: Iterable of raw log lines.
-        status_code: HTTP status code to count.
-        slow_threshold: Milliseconds threshold for "slow" requests.
+        batch: Iterable de líneas crudas del log.
+        status_code: Código de estado HTTP a contabilizar.
+        slow_threshold: Umbral en milisegundos para requests "lentas".
 
     Returns:
-        ``PartialStats`` with counts and per-URL partial histograms.
+        ``PartialStats`` con conteos e histogramas parciales por URL.
 
-    Complexity:
-        ``O(b)`` per batch with bounded extra memory proportional to unique URLs.
+    Complejidad:
+        ``O(b)`` por lote con memoria extra acotada por URLs únicas.
     """
 
     stats = PartialStats()

@@ -1,15 +1,15 @@
 {% extends "dashboard/base.html" %}
 {% block content %}
-<h1 class="h3 mb-3">Detalle ejecución #{{ run.id }}</h1>
+<h1 class="h3 mb-3">Detalle de ejecución #{{ run.id }}</h1>
 <div class="mb-3">
     <span class="badge bg-info text-dark">{{ run.status }}</span>
     {% if run.error_message %}<div class="alert alert-danger mt-2">{{ run.error_message }}</div>{% endif %}
 </div>
 <div class="row g-3 mb-4">
-    <div class="col-md-3"><div class="card card-body"><strong>Total líneas</strong>{{ run.total_lines }}</div></div>
-    <div class="col-md-3"><div class="card card-body"><strong>Bad lines</strong>{{ run.bad_lines }}</div></div>
+    <div class="col-md-3"><div class="card card-body"><strong>Total de líneas</strong>{{ run.total_lines }}</div></div>
+    <div class="col-md-3"><div class="card card-body"><strong>Líneas malformadas</strong>{{ run.bad_lines }}</div></div>
     <div class="col-md-3"><div class="card card-body"><strong>Total {{ run.status_code }}</strong>{{ run.total_500 }}</div></div>
-    <div class="col-md-3"><div class="card card-body"><strong>Total slow</strong>{{ run.total_slow }}</div></div>
+    <div class="col-md-3"><div class="card card-body"><strong>Total lentas</strong>{{ run.total_slow }}</div></div>
 </div>
 <div class="row g-4">
     <div class="col-md-6">
@@ -19,7 +19,7 @@
         </tbody></table>
     </div>
     <div class="col-md-6">
-        <h2 class="h5">Top 10 URLs (slow)</h2>
+        <h2 class="h5">Top 10 URLs (lentas)</h2>
         <table class="table table-sm"><tbody>
         {% for url, count in top_10_slow %}<tr><td>{{ url }}</td><td>{{ count }}</td></tr>{% empty %}<tr><td colspan="2">Sin datos</td></tr>{% endfor %}
         </tbody></table>
@@ -34,7 +34,7 @@
 new Chart(document.getElementById('runChart'), {
   type: 'bar',
   data: {
-    labels: ['{{ run.status_code }}', 'slow', 'bad_lines'],
+    labels: ['{{ run.status_code }}', 'lentas', 'malformadas'],
     datasets: [{
       label: 'Conteos',
       data: [{{ run.total_500 }}, {{ run.total_slow }}, {{ run.bad_lines }}],
