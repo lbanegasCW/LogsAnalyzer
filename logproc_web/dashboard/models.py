@@ -19,7 +19,7 @@ class ProcessingRun(models.Model):
     finished_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
 
-    input_path = models.CharField(max_length=1000)
+    input_path = models.CharField(max_length=1000, blank=True, default="")
     uploaded_file = models.FileField(upload_to="uploads/", null=True, blank=True)
 
     batch_size = models.PositiveIntegerField(default=10_000)
