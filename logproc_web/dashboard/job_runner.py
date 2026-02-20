@@ -9,6 +9,7 @@ from __future__ import annotations
 import threading
 from pathlib import Path
 
+
 from django.utils import timezone
 
 from logproc.api import process_log
@@ -24,6 +25,13 @@ def _resolve_input_path(run: ProcessingRun) -> str:
     if run.uploaded_file:
         return run.uploaded_file.path
     raise ValueError("La ejecución no tiene fuente de entrada")
+
+
+def _parse_status_codes(raw_codes: str) -> list[int]:
+    """Convierte el string persistido en una lista de códigos HTTP."""
+
+    parsed_codes = [int(code.strip()) for code in raw_codes.split(",") if code.strip()]
+    return parsed_codes or [500]
 
 
 def _execute_run(run_id: int) -> None:
@@ -46,6 +54,7 @@ def _execute_run(run_id: int) -> None:
             batch_size=run.batch_size,
             slow_threshold=run.slow_threshold,
             status_code=run.status_code,
+            status_codes=_parse_status_codes(run.status_codes),
             workers=run.workers,
             profile=run.profile,
             profile_stats_path=profile_stats_path,
