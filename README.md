@@ -4,7 +4,7 @@ Procesador eficiente de logs grandes con arquitectura limpia y dos interfaces: C
 
 ## Arquitectura
 
-El repositorio separa **core reusable** de interfaces:
+El repositorio separa **núcleo reutilizable** de interfaces:
 
 - `logproc/` (core):
   - `reader.py`: lectura streaming en batches (sin cargar archivo completo).
@@ -34,10 +34,10 @@ python -m logproc --input /ruta/access.log --batch-size 10000 --slow-threshold 2
 Parámetros:
 
 - `--input` obligatorio.
-- `--batch-size` default `10000`.
-- `--slow-threshold` default `200`.
-- `--status` default `500`.
-- `--workers` default `os.cpu_count()`.
+- `--batch-size` por defecto `10000`.
+- `--slow-threshold` por defecto `200`.
+- `--status` por defecto `500`.
+- `--workers` por defecto `os.cpu_count()`.
 - `--json-out` opcional.
 - `--profile` opcional.
 - `--profile-stats-path` default `profile.stats`.
@@ -53,7 +53,7 @@ Parámetros:
   - parámetros de procesamiento.
   - checkbox de profiling.
 - Detalle de ejecución con cards de métricas, tablas top 10 y gráfico simple (Chart.js CDN).
-- Ejecución en background con thread daemon para no bloquear request.
+- Ejecución en background con hilo daemon para no bloquear request.
 
 > Nota: para producción se recomienda reemplazar runner thread por Celery/RQ con workers externos y retries.
 

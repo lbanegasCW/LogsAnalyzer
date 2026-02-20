@@ -25,7 +25,7 @@
             <td>{{ run.id }}</td>
             <td>{{ run.created_at }}</td>
             <td><span class="badge bg-secondary">{{ run.status }}</span></td>
-            <td class="small text-break">{{ run.input_path|default:"(upload)" }}</td>
+            <td class="small text-break">{{ run.input_path|default:"(archivo subido)" }}</td>
             <td>{{ run.total_lines }}</td>
             <td><a class="btn btn-sm btn-outline-primary" href="/runs/{{ run.id }}/">Ver</a></td>
         </tr>

@@ -1,4 +1,4 @@
-"""Utilities to run callables under cProfile."""
+"""Utilidades para ejecutar funciones bajo cProfile."""
 
 from __future__ import annotations
 
@@ -11,15 +11,15 @@ T = TypeVar("T")
 
 
 def run_with_profile(func: Callable[[], T], stats_path: str = "profile.stats", top_n: int = 20) -> T:
-    """Execute ``func`` under cProfile and persist profiler stats.
+    """Ejecuta ``func`` bajo cProfile y persiste estadísticas del profiler.
 
-    Args:
-        func: Zero-arg callable to execute.
-        stats_path: Destination path for profile stats.
-        top_n: Number of hotspots to print by cumulative time.
+    Parámetros:
+        func: Callable sin argumentos a ejecutar.
+        stats_path: Ruta destino para estadísticas de profile.
+        top_n: Cantidad de hotspots a imprimir por tiempo acumulado.
 
-    Returns:
-        The value returned by ``func``.
+    Retorna:
+        El valor retornado por ``func``.
     """
 
     profiler = cProfile.Profile()
@@ -30,6 +30,6 @@ def run_with_profile(func: Callable[[], T], stats_path: str = "profile.stats", t
     output = Path(stats_path)
     profiler.dump_stats(str(output))
 
-    print(f"\n[profile] Stats guardadas en: {output}")
+    print(f"\n[profile] Estadísticas guardadas en: {output}")
     pstats.Stats(profiler).sort_stats("cumtime").print_stats(top_n)
     return result

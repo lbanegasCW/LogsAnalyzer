@@ -1,11 +1,11 @@
-"""App configuration for dashboard."""
+"""Configuración de la app dashboard."""
 
 from django.apps import AppConfig
 
 
 class DashboardConfig(AppConfig):
-    """Dashboard app config."""
+    """Configuración principal de la app dashboard."""
 
     default_auto_field = "django.db.models.BigAutoField"
     name = "logproc_web.dashboard"
-    verbose_name = "Log Processor Dashboard"
+    verbose_name = "Panel de procesamiento de logs"

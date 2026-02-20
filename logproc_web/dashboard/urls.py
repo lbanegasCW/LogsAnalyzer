@@ -1,4 +1,4 @@
-"""Dashboard URL routes."""
+"""Rutas URL del dashboard."""
 
 from django.urls import path
 

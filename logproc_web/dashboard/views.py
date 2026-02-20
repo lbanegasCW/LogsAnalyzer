@@ -1,4 +1,4 @@
-"""Dashboard views for listing, creating and inspecting processing runs."""
+"""Vistas del dashboard para listar, crear e inspeccionar ejecuciones."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from .models import ProcessingRun
 
 
 def run_list(request):
-    """Render run list with optional status/date filters."""
+    """Renderiza el listado con filtros opcionales por estado y fecha."""
 
     runs: QuerySet[ProcessingRun] = ProcessingRun.objects.all()
     status_filter = request.GET.get("status")
@@ -35,14 +35,14 @@ def run_list(request):
 
 
 def run_create(request):
-    """Render creation form and schedule asynchronous processing."""
+    """Renderiza el alta y agenda procesamiento asíncrono."""
 
     if request.method == "POST":
         form = ProcessingRunForm(request.POST, request.FILES)
         if form.is_valid():
             run = form.save(commit=False)
             if run.uploaded_file and not run.input_path:
-                # for tiny test files only; path mode remains recommended for big logs
+                # Solo para pruebas chicas; para logs grandes se recomienda path.
                 run.input_path = ""
             run.status = ProcessingRun.Status.PENDING
             run.save()
@@ -55,7 +55,7 @@ def run_create(request):
 
 
 def run_detail(request, run_id: int):
-    """Show run details, metrics and chart/table data."""
+    """Muestra detalles de la ejecución, métricas y datos para gráficos/tablas."""
 
     run = get_object_or_404(ProcessingRun, pk=run_id)
     top_10_status = run.metrics_json.get("top_10_status", []) if run.metrics_json else []

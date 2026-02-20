@@ -1,6 +1,6 @@
-"""logproc package.
+"""Paquete logproc.
 
-Reusable, efficient log processing core designed to be invoked from CLI, web, or scripts.
+Núcleo reutilizable y eficiente para procesar logs desde CLI, web o scripts.
 """
 
 from .api import process_log
