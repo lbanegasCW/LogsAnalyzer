@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 
 from django import forms
+from django.db import models
 
 from .models import ProcessingRun
 
@@ -12,7 +13,7 @@ from .models import ProcessingRun
 class ProcessingRunForm(forms.ModelForm):
     """Formulario para crear una nueva ejecución de procesamiento."""
 
-    class InputMode(forms.TextChoices):
+    class InputMode(models.TextChoices):
         PATH = "path", "Ruta"
         UPLOAD = "upload", "Upload"
 
