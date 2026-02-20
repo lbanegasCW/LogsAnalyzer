@@ -17,6 +17,18 @@ dev = [
     "sphinx>=7.0",
 ]
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["logproc", "logproc.*", "logproc_web", "logproc_web.*"]
+
+[tool.setuptools.package-data]
+logproc_web = [
+    "dashboard/templates/**/*.html",
+    "dashboard/static/**/*.css",
+]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 addopts = "-q"
