@@ -3,19 +3,25 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Iterable
+from typing import Iterable, Sequence
 
 from .metrics import PartialStats
 from .parser import parse_line
 
 
-def process_batch(batch: Iterable[str], status_code: int = 500, slow_threshold: int = 200) -> PartialStats:
+def process_batch(
+    batch: Iterable[str],
+    status_code: int = 500,
+    slow_threshold: int = 200,
+    status_codes: Sequence[int] | None = None,
+) -> PartialStats:
     """Procesa un lote y devuelve contadores agregados parciales.
 
     Parámetros:
         batch: Iterable de líneas crudas del log.
-        status_code: Código HTTP a contabilizar.
+        status_code: Código HTTP a contabilizar (compatibilidad).
         slow_threshold: Umbral en milisegundos para requests "lentas".
+        status_codes: Lista de códigos HTTP a contabilizar.
 
     Retorna:
         ``PartialStats`` con conteos e histogramas parciales por URL.
@@ -28,6 +34,8 @@ def process_batch(batch: Iterable[str], status_code: int = 500, slow_threshold: 
     status_counter: Counter[str] = Counter()
     slow_counter: Counter[str] = Counter()
 
+    target_codes = set(status_codes or [status_code])
+
     for line in batch:
         stats.total_lines += 1
         parsed = parse_line(line)
@@ -37,7 +45,7 @@ def process_batch(batch: Iterable[str], status_code: int = 500, slow_threshold: 
 
         url, status, response_time = parsed
 
-        if status == status_code:
+        if status in target_codes:
             stats.total_status += 1
             status_counter[url] += 1
 

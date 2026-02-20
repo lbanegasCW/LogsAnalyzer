@@ -41,9 +41,6 @@ def run_create(request):
         form = ProcessingRunForm(request.POST, request.FILES)
         if form.is_valid():
             run = form.save(commit=False)
-            if run.uploaded_file and not run.input_path:
-                # Solo para pruebas chicas; para logs grandes se recomienda path.
-                run.input_path = ""
             run.status = ProcessingRun.Status.PENDING
             run.save()
             launch_run_in_background(run)

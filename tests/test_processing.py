@@ -58,3 +58,16 @@ def test_procesamiento_archivo(tmp_path):
     assert result.total_slow == 2
     assert result.top_url_status == ("/a", 2)
     assert result.top_url_slow == ("/a", 1)
+
+
+def test_filtrado_multiple_status():
+    batch = [
+        '10.0.0.1 - - [10/Sep/2024:15:03:27] "GET /a" 500 100',
+        '10.0.0.2 - - [10/Sep/2024:15:03:28] "GET /b" 400 90',
+        '10.0.0.3 - - [10/Sep/2024:15:03:29] "GET /c" 200 80',
+    ]
+
+    partial = process_batch(batch, status_codes=[500, 400], slow_threshold=200)
+    assert partial.total_status == 2
+    assert partial.status_by_url["/a"] == 1
+    assert partial.status_by_url["/b"] == 1

@@ -7,7 +7,7 @@ import os
 from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 from time import perf_counter
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Sequence
 
 from .metrics import PartialStats, ProcessingResult, top_n_urls, top_url
 from .profiling import run_with_profile
@@ -21,6 +21,7 @@ def process_log(
     batch_size: int = 10_000,
     slow_threshold: int = 200,
     status_code: int = 500,
+    status_codes: Sequence[int] | None = None,
     workers: Optional[int] = None,
     profile: bool = False,
     json_out_path: Optional[str] = None,
@@ -32,7 +33,8 @@ def process_log(
         input_path: Ruta al archivo de logs de entrada.
         batch_size: Cantidad de líneas por lote.
         slow_threshold: Umbral de request lenta en milisegundos.
-        status_code: Código HTTP a agregar.
+        status_code: Código HTTP a agregar (compatibilidad).
+        status_codes: Lista de códigos HTTP a agregar.
         workers: Cantidad de procesos worker. ``None`` usa ``os.cpu_count()``.
         profile: Si se ejecuta el procesamiento bajo cProfile.
         json_out_path: Ruta opcional para exportar el resultado serializado.
@@ -51,11 +53,17 @@ def process_log(
     """
 
     worker_count = workers or (os.cpu_count() or 1)
+    selected_status_codes = tuple(status_codes or [status_code])
 
     def _run() -> ProcessingResult:
         start = perf_counter()
         batch_iter = read_batches(input_path, batch_size=batch_size)
-        worker_func = partial(process_batch, status_code=status_code, slow_threshold=slow_threshold)
+        worker_func = partial(
+            process_batch,
+            status_code=status_code,
+            status_codes=selected_status_codes,
+            slow_threshold=slow_threshold,
+        )
 
         partials: Iterable[PartialStats]
         if worker_count == 1:
@@ -77,7 +85,8 @@ def process_log(
             top_10_status=top_n_urls(merged.status_by_url, limit=10),
             top_10_slow=top_n_urls(merged.slow_by_url, limit=10),
             elapsed_seconds=elapsed,
-            status_code=status_code,
+            status_code=selected_status_codes[0],
+            status_codes=selected_status_codes,
             slow_threshold=slow_threshold,
             workers=worker_count,
         )

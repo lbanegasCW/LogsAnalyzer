@@ -4,7 +4,78 @@
 <p class="text-muted">Para logs grandes usar <strong>input_path</strong>. Subir archivo se recomienda solo para pruebas pequeñas.</p>
 <form method="post" enctype="multipart/form-data" class="card card-body">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <div class="mb-3">
+        <label class="form-label d-block">{{ form.input_mode.label }}</label>
+        {{ form.input_mode }}
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <div class="card card-body input-card" data-mode="path">
+                <h2 class="h6">Ejecutar por path</h2>
+                <div class="mb-2">
+                    {{ form.input_path.label_tag }}
+                    {{ form.input_path }}
+                    {% if form.input_path.errors %}<div class="text-danger small">{{ form.input_path.errors }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-body input-card" data-mode="upload">
+                <h2 class="h6">Ejecutar por upload</h2>
+                <div class="mb-2">
+                    {{ form.uploaded_file.label_tag }}
+                    {{ form.uploaded_file }}
+                    {% if form.uploaded_file.errors %}<div class="text-danger small">{{ form.uploaded_file.errors }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        {{ form.status_codes.label_tag }}
+        {{ form.status_codes }}
+        <div class="form-text">{{ form.status_codes.help_text }}</div>
+        {% if form.status_codes.errors %}<div class="text-danger small">{{ form.status_codes.errors }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">{{ form.batch_size.label_tag }} {{ form.batch_size }}</div>
+    <div class="mb-3">{{ form.slow_threshold.label_tag }} {{ form.slow_threshold }}</div>
+    <div class="mb-3">{{ form.workers.label_tag }} {{ form.workers }}</div>
+    <div class="mb-3 form-check">{{ form.profile }} {{ form.profile.label_tag }}</div>
+
     <button class="btn btn-primary" type="submit">Iniciar procesamiento</button>
 </form>
+
+<script>
+(function() {
+  const modeInputs = document.querySelectorAll('input[name="input_mode"]');
+  const pathInput = document.getElementById('id_input_path');
+  const uploadInput = document.getElementById('id_uploaded_file');
+  const cards = document.querySelectorAll('.input-card');
+
+  function updateMode() {
+    const activeMode = document.querySelector('input[name="input_mode"]:checked')?.value;
+    const pathMode = activeMode === 'path';
+
+    pathInput.disabled = !pathMode;
+    uploadInput.disabled = pathMode;
+
+    cards.forEach((card) => {
+      const enabled = card.dataset.mode === activeMode;
+      card.classList.toggle('input-card-active', enabled);
+    });
+  }
+
+  modeInputs.forEach((input) => input.addEventListener('change', updateMode));
+  updateMode();
+})();
+</script>
 {% endblock %}

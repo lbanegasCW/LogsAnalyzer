@@ -8,12 +8,12 @@
 <div class="row g-3 mb-4">
     <div class="col-md-3"><div class="card card-body"><strong>Total líneas</strong>{{ run.total_lines }}</div></div>
     <div class="col-md-3"><div class="card card-body"><strong>Líneas malformadas</strong>{{ run.bad_lines }}</div></div>
-    <div class="col-md-3"><div class="card card-body"><strong>Total {{ run.status_code }}</strong>{{ run.total_500 }}</div></div>
+    <div class="col-md-3"><div class="card card-body"><strong>Total {{ run.status_codes }}</strong>{{ run.total_500 }}</div></div>
     <div class="col-md-3"><div class="card card-body"><strong>Total lentas</strong>{{ run.total_slow }}</div></div>
 </div>
 <div class="row g-4">
     <div class="col-md-6">
-        <h2 class="h5">Top 10 URLs ({{ run.status_code }})</h2>
+        <h2 class="h5">Top 10 URLs ({{ run.status_codes }})</h2>
         <table class="table table-sm"><tbody>
         {% for url, count in top_10_status %}<tr><td>{{ url }}</td><td>{{ count }}</td></tr>{% empty %}<tr><td colspan="2">Sin datos</td></tr>{% endfor %}
         </tbody></table>
@@ -34,7 +34,7 @@
 new Chart(document.getElementById('runChart'), {
   type: 'bar',
   data: {
-    labels: ['{{ run.status_code }}', 'lentas', 'líneas_malformadas'],
+    labels: ['{{ run.status_codes }}', 'lentas', 'líneas_malformadas'],
     datasets: [{
       label: 'Conteos',
       data: [{{ run.total_500 }}, {{ run.total_slow }}, {{ run.bad_lines }}],

@@ -25,6 +25,7 @@ class ProcessingRun(models.Model):
     batch_size = models.PositiveIntegerField(default=10_000)
     slow_threshold = models.PositiveIntegerField(default=200)
     status_code = models.PositiveIntegerField(default=500)
+    status_codes = models.CharField(max_length=200, default="500")
     workers = models.PositiveIntegerField(default=1)
     profile = models.BooleanField(default=False)
 

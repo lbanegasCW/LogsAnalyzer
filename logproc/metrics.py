@@ -46,7 +46,8 @@ class ProcessingResult:
         top_10_status: Top 10 URLs para el estado objetivo.
         top_10_slow: Top 10 URLs para respuestas lentas.
         elapsed_seconds: Duración total del procesamiento en segundos.
-        status_code: Código de estado usado para filtrar.
+        status_code: Primer código de estado usado para filtrar.
+        status_codes: Códigos de estado usados para filtrar.
         slow_threshold: Umbral de lentitud en milisegundos.
         workers: Cantidad de workers usados.
         profile_stats_path: Ruta al archivo de cProfile, cuando corresponde.
@@ -62,6 +63,7 @@ class ProcessingResult:
     top_10_slow: Sequence[Tuple[str, int]]
     elapsed_seconds: float
     status_code: int
+    status_codes: Sequence[int]
     slow_threshold: int
     workers: int
     profile_stats_path: Optional[str] = None
